@@ -1,0 +1,54 @@
+***********************************************************
+* ZKVSLOAD - Load sample records into a ZKVS dataset
+* Zane Hambly, 2026
+*
+* Opens a sequential file for output, writes a few
+* fixed-length records using the ZKVS macros, and
+* closes it. This is the first thing you run.
+* Without data there is nothing to read.
+***********************************************************
+ZKVSLOAD CSECT 
+         STM R14,R12,12(R13)   Save registers
+         LR  R12,R15 
+         USING ZKVSLOAD,R12
+         LA   R11,SAVEAREA  Address of save area for macros
+         ST  R13,4(R11)     Pass address of caller's save area to ma*
+         ST  R11,8(R13)     Pass address of save area to macros
+         LR  R13,R11
+
+*WORK SECTION
+
+         ZKVOPEN  OUTFILE,OUTPUT
+         BNZ   OPENERR
+
+         MVC      RECORD,=CL80'REC001 this is the first record'
+         ZKVPUT   OUTFILE,RECORD
+         BNZ   PUTERR
+         MVC   RECORD,=CL80'REC002 this is the second record'
+         ZKVPUT   OUTFILE,RECORD
+         BNZ   PUTERR
+         MVC   RECORD,=CL80'REC003 this is the third record'
+         ZKVPUT   OUTFILE,RECORD
+         BNZ   PUTERR
+         ZKVCLOSE  OUTFILE
+         BNZ   CLOSEERR
+         WTO      'Records loaded successfully.'
+         B     EXIT
+OPENERR  WTO 'Error opening file for output.'
+         ABEND 100,DUMP
+PUTERR   WTO 'Error writing record to file.'
+         ABEND 200,DUMP
+CLOSEERR WTO 'Error closing file after writing.'
+         ABEND 300,DUMP
+
+EXIT     L     R13,4(R13)
+         LM    R14,R12,12(R13)   Restore registers
+         SR    R15,R15          Set return code to 0 (success)
+         BR    R14              Return to caller
+
+OUTFILE  DCB   DDNAME=ZKVSDATA,DSORG=PS,MACRF=(PM),                    X
+               RECFM=FB,LRECL=80,BLKSIZE=800
+RECORD   DS    CL80
+SAVEAREA DS    18F              Save area for macros 
+         EQUREGS
+         END   ZKVSLOAD

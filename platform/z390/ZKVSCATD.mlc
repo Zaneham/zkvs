@@ -1,0 +1,19 @@
+*********************************************************************
+* ZKVSCATD - ZKVS Catalog Definition for z390
+* Zane Hambly, 2026
+*
+* This defines the VSAM catalog for ZKVS on z390.
+* z390 uses its own DEFINE macro instead of IDCAMS,
+* because apparently every platform needs its own way
+* to say "please make me a file."
+*
+* Assemble this FIRST before running anything else.
+* If you skip this step you will get a very unhelpful
+* error message and waste twenty minutes. Ask me how
+* I know.
+*
+* TODO: Define the KSDS cluster for ZKVS records
+*       Key length, record size, etc. go here
+*       See DEMOCAT.MLC in z390/vsam1/demo/ for syntax
+*********************************************************************
+         END

@@ -1,0 +1,48 @@
+*********************************************************************
+*  ZKVSSEQ.MLC - ZKVS Sequential File Definition
+*  Zane Hambly, 2026
+*  This defines the sequential file for ZKVS records.
+* *******************************************************************
+ZKVSSEQ  CSECT 
+         STM   R14,R12,12(R13)   Save registers
+         LR    R12,R15
+         USING ZKVSSEQ,R12
+         LA    R11,SAVEAREA  Address of save area for macros
+         ST    R13,4(R11)     Pass address of caller's save area
+         ST    R11,8(R13)     Pass address of save area to macros
+         LR    R13,R11
+
+*WORK SECTION
+         ZKVOPEN INFILE,INPUT
+         BNZ   OPENERR
+*
+* Read loop - keeps going until EODAD fires
+*
+READLOOP ZKVGET INFILE,RECORD
+         WTO   MF=(E,WTOREC)
+         B     READLOOP
+*
+* End of file - EODAD jumps here automatically
+*
+ENDDATA  WTO   'End of file reached.'
+         ZKVCLOSE INFILE
+         BNZ   CLOSEERR
+         WTO   'ZKVSSEQ COMPLETED OK'
+         B     EXIT
+OPENERR  WTO   'Error opening file for input.'
+         ABEND 100,DUMP
+CLOSEERR WTO   'Error closing file after reading.'
+         ABEND 200,DUMP
+EXIT     L     R13,4(R13)
+         LM    R14,R12,12(R13)   Restore registers
+         SR    R15,R15          Set return code to 0 (success)
+         BR    R14              Return to caller
+
+INFILE   DCB   DDNAME=ZKVSDATA,DSORG=PS,MACRF=(GM),RECFM=FB,           X
+               LRECL=80,BLKSIZE=800,EODAD=ENDDATA
+WTOREC   DC    AL2(WTOEND-*,0),C'REC='
+RECORD   DS    CL80
+WTOEND   EQU   *
+SAVEAREA DS    18F              Save area for macros 
+         EQUREGS
+         END   ZKVSSEQ

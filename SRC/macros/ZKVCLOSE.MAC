@@ -1,0 +1,15 @@
+         
+         MACRO
+&LABEL   ZKVCLOSE &DCB
+.*********************************************************************
+.* ZKVCLOSE - Close a dataset for ZKVS
+.* Zane Hambly, 2026
+.*
+.* &DCB  - label of the DCB to close
+.*
+.* After expansion, condition code reflects success/failure.
+.* Caller tests with BNZ to branch on error.
+.*********************************************************************
+&LABEL   CLOSE (&DCB)
+         LTR   R15,R15
+         MEND

@@ -1,0 +1,17 @@
+
+         MACRO
+&LABEL   ZKVGET &DCB,&BUFFER
+.*********************************************************************
+.* ZKVGET - Read a record from a dataset for ZKVS
+.* Zane Hambly, 2026
+.*
+.* &DCB    - label of the DCB to read from
+.* &BUFFER - address of the buffer to read into
+.* Record length is defined by the DCB (LRECL), not passed here.
+.*
+.* After expansion, condition code reflects success/failure.
+.* Caller tests with BNZ to branch on error.
+.*********************************************************************
+&LABEL   GET   &DCB,&BUFFER
+         LTR   R15,R15
+         MEND

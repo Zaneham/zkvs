@@ -1,0 +1,17 @@
+# Personal notes I dont want to share because they feature like a million ???? on Databases lmao.
+Mynotes.md
+NOTES.md
+
+# z390 build artifacts
+*.OBJ
+*.PRN
+*.390
+*.LST
+*.ERR
+*.LOG
+*.BAL
+*.STA
+*.TR*
+
+# Data files (generated at runtime)
+platform/z390/data/
