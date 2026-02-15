@@ -1,0 +1,33 @@
+
+         MACRO
+&LABEL   ZKVKEY &TABLE,&COUNT,&KEY,&BUFFER
+.*********************************************************************
+.* ZKVKEY - Search a record table by key (linear scan)
+.* Zane Hambly, 2026
+.*
+.* &TABLE  - label of the record table (array of CL80)
+.* &COUNT  - label of fullword containing record count
+.* &KEY    - label of the search key (CL8)
+.* &BUFFER - label of CL80 buffer to receive found record
+.*
+.* Compares first 8 bytes of each record against &KEY.
+.* Uses R3,R4,R5. Sets R15 and condition code.
+.* R15=0 (found, record copied to BUFFER).
+.* R15=4 (not found).
+.*********************************************************************
+&LABEL   L     R3,&COUNT              Record count
+         LA    R4,0                    Index i = 0
+         LA    R5,&TABLE               Current record pointer
+ZKL&SYSNDX CR  R4,R3                  Past end?
+         BNL   ZKN&SYSNDX             Yes - not found
+         CLC   0(8,R5),&KEY           Compare 8-byte key
+         BE    ZKY&SYSNDX             Match
+         LA    R5,80(R5)              Next record
+         LA    R4,1(R4)               i++
+         B     ZKL&SYSNDX             Loop
+ZKY&SYSNDX MVC &BUFFER.(80),0(R5)    Copy found record
+         SR    R15,R15                RC=0
+         B     ZKX&SYSNDX
+ZKN&SYSNDX LA  R15,4                 RC=4
+ZKX&SYSNDX LTR R15,R15              Set condition code
+         MEND

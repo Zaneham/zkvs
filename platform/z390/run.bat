@@ -25,6 +25,7 @@ if /I "%1"=="" goto usage
 if /I "%1"=="load" goto load
 if /I "%1"=="read" goto read
 if /I "%1"=="both" goto both
+if /I "%1"=="key" goto key
 goto usage
 
 :load
@@ -51,6 +52,18 @@ if %ERRORLEVEL% NEQ 0 (
 echo ZKVSSEQ completed OK
 goto done
 
+:key
+echo ========================================
+echo  ZKVSKEY - Keyed search
+echo ========================================
+call %Z390%\bat\ASMLG.BAT %SRC%\ZKVSKEY sysmac(+%MACDIR%)
+if %ERRORLEVEL% NEQ 0 (
+    echo ZKVSKEY failed with RC=%ERRORLEVEL%
+    goto done
+)
+echo ZKVSKEY completed OK
+goto done
+
 :both
 call :load
 if %ERRORLEVEL% NEQ 0 goto done
@@ -58,9 +71,10 @@ call :read
 goto done
 
 :usage
-echo Usage: run.bat [load^|read^|both]
+echo Usage: run.bat [load^|read^|both^|key]
 echo   load  - write sample records
 echo   read  - read them back sequentially
 echo   both  - load then read
+echo   key   - search by key (REC002)
 
 :done
