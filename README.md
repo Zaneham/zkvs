@@ -10,6 +10,8 @@ B-tree indexing, alternate keys, and crash recovery.
 System-agnostic: same source runs on z390, Hercules, and real z/OS.
 Platform I/O is behind a macro abstraction layer.
 
+Currently working on this and chipping away at it.
+
 ## Status
 
 | Version | What | Status |
